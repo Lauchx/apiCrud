@@ -1,0 +1,11 @@
+body{
+    background: black;
+    color: white;
+}
+
+table{
+    border-collapse: collapse;
+}
+tr:nth-child(odd){
+    background:#636363
+}
