@@ -2,6 +2,9 @@ body{
     background: black;
     color: white;
 }
+th{
+    background: rgb(253, 0, 0);
+}
 
 table{
     border-collapse: collapse;

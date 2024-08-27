@@ -8,10 +8,12 @@
     <script src="js/script.js"></script>
 </head>
 <body>
-    <button onclick="hh()">SACAME</button>
+
     <table>
         <thead>
-            <th></th>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Data</th>
         </thead>
         <tbody>
         </tbody>
@@ -19,12 +21,12 @@
             <input type="text" id="name" placeholder="Name">
             <input type="text" id="DataName" placeholder="DataName">
             <input type="text" id="Data" placeholder="Data">
-            <div id="dataAttributes">
-                <!-- Contenedor para mostrar los atributos agregados -->
-            </div>
+            <div id="dataAttributes"></div>
             <button id="add-attribute-btn" onclick="dataAttribute()">Agregar atributo</button>
             <button type="submit" onclick="addCellphone()">Add Cellphone</button>
         </tfoot>
     </table>
+
+    <div id="upgrade"></div>
 </body>
 </html>
