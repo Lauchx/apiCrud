@@ -1,4 +1,3 @@
-//const url = "https://apimocha.com/celus/tech"
 const url = "https://api.restful-api.dev/objects"
 
 function getApi() {
@@ -27,8 +26,8 @@ getApi()
             let cellName = newRow.insertCell()
             let cellUpgradeButton = newRow.insertCell()
             let cellDeleteButton = newRow.insertCell()
-            cellDeleteButton.innerHTML = `<button onclick='deleteCellphone("${apiCellphone.id}", this)'>Eliminar</button>`;
-            cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${apiCellphone.id}", this)' >Actualizar</button>`
+            cellDeleteButton.innerHTML = `<button onclick='deleteCellphone("${apiCellphone.id}", this)'>Delete</button>`;
+            cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${apiCellphone.id}", this)' >Upgrade</button>`
             cellID.innerHTML = apiCellphone.id
             cellName.innerHTML = apiCellphone.name
 
@@ -45,6 +44,7 @@ getApi()
     })
 let data = {}
 function dataAttribute() {
+    if(document.getElementById('DataName').value !== '' && document.getElementById('Data').value !== ''){
     const dataName = document.getElementById('DataName').value;
     const datahtml = document.getElementById('Data').value;
 
@@ -58,7 +58,10 @@ function dataAttribute() {
 
     console.log(data)
     return data
-
+}else{
+    console.log(data + 'esto es la data')
+    return data
+}
 }
 function postPhone(cellphone) {
     return new Promise(function (resolve, reject) {
@@ -105,8 +108,8 @@ function addCellphone() {
         let cellUpgradeButton =  newRow.insertCell()
         let cellDeleteButton = newRow.insertCell()
         cellName.innerHTML = document.getElementById('name').value
-        cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${response.id}", this)'>Upgradear</button>` 
-        cellDeleteButton.innerHTML = `<button onclick = 'deleteCellphone("${response.id}", this)'>Eliminar</button>`
+        cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${response.id}", this)'>Upgrade</button>` 
+        cellDeleteButton.innerHTML = `<button onclick = 'deleteCellphone("${response.id}", this)'>Delete</button>`
         console.log(data)
         if (data !== null) {
             for (let key in data) {
@@ -163,6 +166,7 @@ function putCellphone(cellphone, id) {
         console.log(cellphone)
         document.getElementById("upgrade").value = ""
         xhr.send(cellphone)
+        data = {}
 
     })
 
@@ -170,15 +174,14 @@ function putCellphone(cellphone, id) {
 function upgradeCellphone(id, buttonUpgrade) {
     let data = newDataAtribute()
     let newname =  document.getElementById('newName').value
-    console.lo
     let cellphone = JSON.stringify({
         'id': id,
         'name': document.getElementById('newName').value,
         'data': data,
     })
     document.getElementById("upgrade").innerHTML = " "
-    deleteCellphoneHTML(buttonUpgrade)
     putCellphone(cellphone, id).then(response => {
+        deleteCellphoneHTML(buttonUpgrade)
         console.log(response.id)
         let tbody = document.getElementsByTagName('tbody')[0]
         let newRow = tbody.insertRow()
@@ -188,8 +191,8 @@ function upgradeCellphone(id, buttonUpgrade) {
         let cellUpgradeButton = newRow.insertCell()
         let cellDeleteButton = newRow.insertCell()
         cellName.innerHTML = newname
-        cellDeleteButton.innerHTML = `<button onclick = 'deleteCellphone("${response.id}", this)'>Eliminar</button>`
-        cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${response.id}", this)'>Upgradear</button>` 
+        cellDeleteButton.innerHTML = `<button onclick = 'deleteCellphone("${response.id}", this)'>Delete</button>`
+        cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${response.id}", this)'>Upgrade</button>` 
         console.log(data)
         if (data !== null) {
             for (let key in data) {
@@ -205,6 +208,7 @@ function upgradeCellphone(id, buttonUpgrade) {
 
 }
 function newDataAtribute(){
+    if(document.getElementById('newDataName').value !== '' & document.getElementById('newData').value !== ''){
     const dataName = document.getElementById('newDataName').value;
     const datahtml = document.getElementById('newData').value;
 
@@ -218,6 +222,9 @@ function newDataAtribute(){
 
     console.log(data)
     return data
+}else{
+    return data
+}
 }
 function openDivUpgrade(id, buttonUpgrade) {
 let divUp = document.getElementById("upgrade");
@@ -250,7 +257,7 @@ let divUp = document.getElementById("upgrade");
     divUp.appendChild(newdataAttributesDiv);
 
     let addAttributeBtn = document.createElement("button");
-    addAttributeBtn.id = "add-attribute-btn";
+    addAttributeBtn.id = "NewaddAttribute";
     addAttributeBtn.onclick = newDataAtribute;
     addAttributeBtn.innerHTML = "Agregar atributo";
     divUp.appendChild(addAttributeBtn);
