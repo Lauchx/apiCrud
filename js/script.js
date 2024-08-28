@@ -1,5 +1,5 @@
-const url = "https://apimocha.com/celus/tech"
-//const url = "https://api.restful-api.dev/objects"
+//const url = "https://apimocha.com/celus/tech"
+const url = "https://api.restful-api.dev/objects"
 
 function getApi() {
     return new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ getApi()
             let cellUpgradeButton = newRow.insertCell()
             let cellDeleteButton = newRow.insertCell()
             cellDeleteButton.innerHTML = `<button onclick='deleteCellphone("${apiCellphone.id}", this)'>Eliminar</button>`;
-            cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade()' >Actualizar</button>`
+            cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${apiCellphone.id}", this)' >Actualizar</button>`
             cellID.innerHTML = apiCellphone.id
             cellName.innerHTML = apiCellphone.name
 
@@ -102,8 +102,10 @@ function addCellphone() {
         let cellID = newRow.insertCell()
         cellID.innerHTML = response.id
         let cellName = newRow.insertCell()
+        let cellUpgradeButton =  newRow.insertCell()
         let cellDeleteButton = newRow.insertCell()
         cellName.innerHTML = document.getElementById('name').value
+        cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${response.id}", this)'>Upgradear</button>` 
         cellDeleteButton.innerHTML = `<button onclick = 'deleteCellphone("${response.id}", this)'>Eliminar</button>`
         console.log(data)
         if (data !== null) {
@@ -118,11 +120,10 @@ function addCellphone() {
     })
 }
 function deleteCellphoneHTML(buttonDelete) {
-    console.log(buttonDelete.parentNode.parentNode)
     buttonDelete.parentNode.parentNode.remove()
 }
 
-function deleteCellphone(id, buttonDelete ) {
+function deleteCellphone(id, buttonDelete) {
     var xhr = new XMLHttpRequest();
     xhr.open('DELETE', `${url}/${id}`);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -138,10 +139,10 @@ function deleteCellphone(id, buttonDelete ) {
     xhr.send(id);
 }
 
-function putCellphone(){
+function putCellphone(cellphone, id) {
     return new Promise(function (resolve, reject) {
         let xhr = new XMLHttpRequest()
-        xhr.open('PUT', url)
+        xhr.open('PUT', `${url}/${id}`)
         xhr.setRequestHeader('Content-Type', 'application/json')
 
         xhr.onload = function () {
@@ -160,19 +161,111 @@ function putCellphone(){
         }
         document.getElementById('dataAttributes').innerHTML = ""
         console.log(cellphone)
+        document.getElementById("upgrade").value = ""
         xhr.send(cellphone)
-        data = {}
+
     })
 
 }
-function upgradeCellphone(){
+function upgradeCellphone(id, buttonUpgrade) {
+    let data = newDataAtribute()
+    let newname =  document.getElementById('newName').value
+    console.lo
+    let cellphone = JSON.stringify({
+        'id': id,
+        'name': document.getElementById('newName').value,
+        'data': data,
+    })
+    document.getElementById("upgrade").innerHTML = " "
+    deleteCellphoneHTML(buttonUpgrade)
+    putCellphone(cellphone, id).then(response => {
+        console.log(response.id)
+        let tbody = document.getElementsByTagName('tbody')[0]
+        let newRow = tbody.insertRow()
+        let cellID = newRow.insertCell()
+        cellID.innerHTML = response.id
+        let cellName = newRow.insertCell()
+        let cellUpgradeButton = newRow.insertCell()
+        let cellDeleteButton = newRow.insertCell()
+        cellName.innerHTML = newname
+        cellDeleteButton.innerHTML = `<button onclick = 'deleteCellphone("${response.id}", this)'>Eliminar</button>`
+        cellUpgradeButton.innerHTML = `<button onclick='openDivUpgrade("${response.id}", this)'>Upgradear</button>` 
+        console.log(data)
+        if (data !== null) {
+            for (let key in data) {
+                let cellData = newRow.insertCell()
+                cellData.innerHTML = `${key}: ${data[key]}`
+            }
+        } else {
+            let cellData = newRow.insertCell()
+            cellData.innerHTML = 'No hay datos'
+        }
 
-putCellphone().then(()=>{
-
-})
+    })
 
 }
-function openDivUpgrade(){
-    let divUp = document.getElementById("upgrade")
-    divUp.innerHTML = '<h5>Modificar Celular</h5> <input type="text" id="name" placeholder="Name"> <input type="text" id="DataName" placeholder="DataName"> <input type="text" id="Data" placeholder="Data"> <div id="dataAttributes"></div><button id="add-attribute-btn" onclick="dataAttribute()">Agregar atributo</button><button type="submit" onclick="addCellphone()">Add Cellphone</button>'
+function newDataAtribute(){
+    const dataName = document.getElementById('newDataName').value;
+    const datahtml = document.getElementById('newData').value;
+
+    data[dataName] = datahtml;
+
+    const attributeHTML = `<p>${dataName}: ${datahtml}</p>`;
+    document.getElementById('newdataAttributes').innerHTML += attributeHTML
+
+    document.getElementById('newDataName').value = ""
+    document.getElementById('newData').value = ""
+
+    console.log(data)
+    return data
 }
+function openDivUpgrade(id, buttonUpgrade) {
+let divUp = document.getElementById("upgrade");
+    console.log(buttonUpgrade);
+    divUp.innerHTML = "";
+
+    let h5 =  document.createElement("h5");
+    h5.innerText = "Modificar Datos"
+    divUp.appendChild(h5);
+
+    let newNameInput = document.createElement("input");
+    newNameInput.type = "text";
+    newNameInput.id = "newName";
+    newNameInput.placeholder = "Name";
+    divUp.appendChild(newNameInput);
+
+    let newDataNameInput = document.createElement("input");
+    newDataNameInput.type = "text";
+    newDataNameInput.id = "newDataName";
+    newDataNameInput.placeholder = "DataName";
+    divUp.appendChild(newDataNameInput);
+
+    let newDataInput = document.createElement("input");
+    newDataInput.id = "newData";
+    newDataInput.placeholder = "Data";
+    divUp.appendChild(newDataInput);
+
+    let newdataAttributesDiv = document.createElement("div");
+    newdataAttributesDiv.id = "newdataAttributes";
+    divUp.appendChild(newdataAttributesDiv);
+
+    let addAttributeBtn = document.createElement("button");
+    addAttributeBtn.id = "add-attribute-btn";
+    addAttributeBtn.onclick = newDataAtribute;
+    addAttributeBtn.innerHTML = "Agregar atributo";
+    divUp.appendChild(addAttributeBtn);
+
+    let upgradeBtn = document.createElement("button");
+    upgradeBtn.type = "submit";
+    upgradeBtn.onclick = function() {
+        upgradeCellphone(id, buttonUpgrade);
+    };
+    upgradeBtn.innerHTML = "Upgrade Cellphone";
+    divUp.appendChild(upgradeBtn);
+}
+
+
+
+
+
+
